@@ -14,22 +14,35 @@ function logger({getState,dispatch}){//想获取状态和派发动作
     }
   }
 }
+//thunk 是用来处理函数action的，判断一下如果这个action是一个函数的话，就会让他执行
+function thunk({getState,dispatch}){
+  return function(next){
+      return function(action){
+        if(typeof action == 'function'){
+            action(getState,dispatch);
+        }else{
+            next(action);
+        }
+      }
+  }
+}
 function applyMiddleware(middleware){
   return function (createStore) {
       return function(reducer){
         let store = createStore(reducer);//创建出原生的仓库 getState dispatch
+        let dispatch;
         let middlewareAPI = {
             getState:store.getState,
-            dispatch:store.dispatch
+            dispatch:action=>dispatch(action)
         };
         middleware= middleware(middlewareAPI);
-        let dispatch = middleware(store.dispatch);
+        dispatch = middleware(store.dispatch);
         return {...store,dispatch}
       }
   }
 }
 
 //let store = createStore(reducer);
-let store = applyMiddleware(logger)(createStore)(reducer);
+let store = applyMiddleware(thunk)(createStore)(reducer);
 
 export default store;

@@ -7,6 +7,7 @@ class Counter extends Component{
             <div>
                 <p>{this.props.number}</p>
                 <button onClick={this.props.increment}>+</button>
+                <button onClick={this.props.incrementAsync}>+</button>
             </div>
         )
     }
