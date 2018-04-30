@@ -5,10 +5,17 @@ export default {
         return {type:INCREMENT};
     },
     incrementAsync(){
-        return function(getState,dispatch){
+        return function(dispatch,getState){
             setTimeout(function(){
                dispatch( {type:INCREMENT});
             },1000)
         }
+    },
+    incrementPromise(){
+        return new Promise(function(resolve,reject){
+            setTimeout(function(){
+                resolve({type:INCREMENT});
+            },1000);
+        });
     }
 }

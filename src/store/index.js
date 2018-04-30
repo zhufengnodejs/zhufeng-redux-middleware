@@ -19,13 +19,21 @@ function thunk({getState,dispatch}){
   return function(next){
       return function(action){
         if(typeof action == 'function'){
-            action(getState,dispatch);
+            action(dispatch,getState);
         }else{
             next(action);
         }
       }
   }
 }
+let promise = ({getState,dispatch})=>next=>action=>{
+   if(action.then && typeof action.then =='function'){
+        action.then(dispatch);
+    }else{
+       next(action);
+   }
+}
+
 function applyMiddleware(middleware){
   return function (createStore) {
       return function(reducer){
@@ -43,6 +51,6 @@ function applyMiddleware(middleware){
 }
 
 //let store = createStore(reducer);
-let store = applyMiddleware(thunk)(createStore)(reducer);
+let store = applyMiddleware(promise)(createStore)(reducer);
 
 export default store;
